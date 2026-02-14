@@ -79,3 +79,161 @@ z-index:1;
 
 .signature{
 font-size:12px;
+font-family:"Comic Sans MS",cursive;
+margin-top:10px;
+}
+
+.heart{
+position:absolute;
+font-size:20px;
+animation:float 5s linear infinite;
+}
+
+@keyframes float{
+0%{transform:translateY(100vh);opacity:1;}
+100%{transform:translateY(-10vh);opacity:0;}
+}
+
+.glitter{
+font-size:28px;
+background:linear-gradient(90deg,#fff,#ffe6f0,#fff);
+background-size:200%;
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+animation:shine 2s linear infinite;
+}
+
+@keyframes shine{
+to{background-position:200%;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="container">
+<img src="bear1.gif" class="bear">
+<h1>Will you be my Valentine? 💕</h1>
+
+<button id="yesBtn">Yes 💖</button>
+<button id="noBtn">No 😢</button>
+
+<div class="signature">from Haha</div>
+</div>
+
+<script>
+const noBtn=document.getElementById("noBtn");
+const yesBtn=document.getElementById("yesBtn");
+const container=document.getElementById("container");
+
+let yesSize=16;
+
+function moveButton(){
+const rect = container.getBoundingClientRect();
+const btnWidth = noBtn.offsetWidth;
+const btnHeight = noBtn.offsetHeight;
+
+const maxX = rect.width - btnWidth;
+const maxY = rect.height - btnHeight;
+
+const x = Math.random() * maxX;
+const y = Math.random() * maxY;
+
+noBtn.style.left = x + "px";
+noBtn.style.top = y + "px";
+
+/* Sometimes hide behind YES */
+noBtn.style.zIndex = Math.random() > 0.5 ? "0" : "3";
+
+/* Grow YES */
+yesSize += 4;
+yesBtn.style.fontSize = yesSize + "px";
+}
+
+/* Desktop hover */
+noBtn.addEventListener("mouseenter",moveButton);
+
+/* Mobile tap */
+noBtn.addEventListener("touchstart",function(e){
+e.preventDefault();
+moveButton();
+});
+
+/* Prevent click */
+noBtn.addEventListener("click",function(e){
+e.preventDefault();
+moveButton();
+});
+
+/* Confetti */
+function createConfetti(){
+const rect = yesBtn.getBoundingClientRect();
+
+for(let i=0;i<120;i++){
+let conf=document.createElement("div");
+conf.style.position="absolute";
+conf.style.width="8px";
+conf.style.height="8px";
+conf.style.backgroundColor="hsl("+Math.random()*360+"deg,100%,50%)";
+conf.style.left=rect.left + rect.width/2 +"px";
+conf.style.top=rect.top + rect.height/2 +"px";
+document.body.appendChild(conf);
+
+let angle=Math.random()*2*Math.PI;
+let distance=Math.random()*400;
+
+conf.animate([
+{transform:"translate(0,0)",opacity:1},
+{transform:`translate(${Math.cos(angle)*distance}px,${Math.sin(angle)*distance}px)`,opacity:0}
+],{
+duration:1500,
+easing:"ease-out"
+});
+
+setTimeout(()=>conf.remove(),1500);
+}
+}
+
+/* YES click */
+yesBtn.addEventListener("click",()=>{
+createConfetti();
+
+if(navigator.vibrate){
+navigator.vibrate(200);
+}
+
+setTimeout(()=>{
+document.body.innerHTML=`
+<div style="height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;background:#ff2e63;color:white;text-align:center;">
+<img src="bear2.gif" width="200">
+<h1 class="glitter">Yayyyy 💖 Happy Valentine's Day!!!</h1>
+<button onclick="window.open('https://wa.me/?text=I said YES 💖','_blank')" 
+style="padding:12px 20px;border:none;border-radius:12px;background:white;color:#ff2e63;font-weight:bold;margin-top:20px;">
+Share on WhatsApp 💌
+</button>
+<div style="font-size:14px;font-family:'Comic Sans MS';margin-top:20px;">
+from Haha
+</div>
+</div>
+`;
+},800);
+});
+
+/* Floating hearts */
+function createHeart(){
+const heart=document.createElement("div");
+heart.className="heart";
+heart.innerHTML="💗";
+heart.style.left=Math.random()*100+"vw";
+heart.style.animationDuration=(3+Math.random()*3)+"s";
+document.body.appendChild(heart);
+setTimeout(()=>heart.remove(),6000);
+}
+setInterval(createHeart,500);
+
+/* Initial position */
+moveButton();
+</script>
+
+</body>
+</html>
